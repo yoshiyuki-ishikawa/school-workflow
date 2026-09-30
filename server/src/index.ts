@@ -41,6 +41,39 @@ app.use(session({
   },
 }));
 
+let isDbInitialized = false;
+
+export function ensureDatabaseInitialized(): void {
+  if (!isDbInitialized) {
+    try {
+      initDatabase();
+      seedDatabase();
+      isDbInitialized = true;
+      console.log('[Server] Database initialized and seeded successfully.');
+    } catch (err: any) {
+      console.error('[Server] Database initialization failed:', err.message);
+      throw err;
+    }
+  }
+}
+
+// 起動時・インポート時に即時初期化を試行
+try {
+  ensureDatabaseInitialized();
+} catch (e) {
+  console.warn('[Server] Immediate DB initialization warning:', e);
+}
+
+// サーバーレス環境（Vercel）でも初回リクエスト時にDB初期化が保証されるミドルウェア（全ルートより前）
+app.use((req, res, next) => {
+  try {
+    ensureDatabaseInitialized();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 // API ルーティング (Layer 1: Public / Auth Routes)
 app.use('/api/system', systemRoutes);
 app.use('/api/auth', authRoutes);
@@ -78,32 +111,6 @@ if (fs.existsSync(config.CLIENT_DIST)) {
     res.sendFile(path.join(config.CLIENT_DIST, 'index.html'));
   });
 }
-
-let isDbInitialized = false;
-
-export function ensureDatabaseInitialized(): void {
-  if (!isDbInitialized) {
-    try {
-      initDatabase();
-      seedDatabase();
-      isDbInitialized = true;
-      console.log('[Server] Database initialized and seeded successfully.');
-    } catch (err: any) {
-      console.error('[Server] Database initialization failed:', err.message);
-      throw err;
-    }
-  }
-}
-
-// サーバーレス環境（Vercel）でも初回リクエスト時にDB初期化が保証されるミドルウェア
-app.use((req, res, next) => {
-  try {
-    ensureDatabaseInitialized();
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
 
 // サーバー起動処理 (ローカル・コンテナ実行用)
 function startServer() {
