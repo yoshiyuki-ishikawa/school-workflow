@@ -1,5 +1,4 @@
 import express from 'express';
-import session from 'express-session';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
@@ -18,7 +17,12 @@ import careCasesRoutes from './routes/careCases';
 import schemaRoutes from './routes/schemas';
 import { enforcePasswordStateGate } from './middlewares/auth';
 
+import { statelessSession } from './middlewares/statelessSession';
+
 const app = express();
+
+// Vercelなどのリバースプロキシ環境下でHTTPSプロトコル・プロキシヘッダーを正しく信頼
+app.set('trust proxy', 1);
 
 // 基本ミドルウェア
 app.use(cors({
@@ -28,18 +32,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// セッション設定 (HttpOnly Cookie, SameSite=Lax)
-app.use(session({
-  secret: config.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: false, // PoC環境(HTTP)ではfalse、本番HTTPS化時にtrue
-    maxAge: 1000 * 60 * 60 * 24, // 24時間
-  },
-}));
+// ステートレス署名付きCookieセッション (サーバーレス複数インスタンス間でもセッションが一切切れない)
+app.use(statelessSession(config.SESSION_SECRET));
 
 let isDbInitialized = false;
 

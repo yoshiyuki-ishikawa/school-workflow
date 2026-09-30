@@ -116,6 +116,7 @@ router.post('/logout', (req: Request, res: Response): void => {
 
   req.session.destroy((err) => {
     res.clearCookie('connect.sid');
+    res.clearCookie('school_workflow_session');
     res.json({ success: true, message: 'ログアウトしました' });
   });
 });
