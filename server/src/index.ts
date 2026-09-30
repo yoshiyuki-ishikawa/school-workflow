@@ -79,17 +79,35 @@ if (fs.existsSync(config.CLIENT_DIST)) {
   });
 }
 
-// サーバー起動処理
-function startServer() {
-  // DB初期化とマイグレーション実行
-  try {
-    initDatabase();
-    seedDatabase();
-    console.log('[Server] Database initialized and seeded successfully.');
-  } catch (err: any) {
-    console.error('[Server] Database initialization failed:', err.message);
-    process.exit(1);
+let isDbInitialized = false;
+
+export function ensureDatabaseInitialized(): void {
+  if (!isDbInitialized) {
+    try {
+      initDatabase();
+      seedDatabase();
+      isDbInitialized = true;
+      console.log('[Server] Database initialized and seeded successfully.');
+    } catch (err: any) {
+      console.error('[Server] Database initialization failed:', err.message);
+      throw err;
+    }
   }
+}
+
+// サーバーレス環境（Vercel）でも初回リクエスト時にDB初期化が保証されるミドルウェア
+app.use((req, res, next) => {
+  try {
+    ensureDatabaseInitialized();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// サーバー起動処理 (ローカル・コンテナ実行用)
+function startServer() {
+  ensureDatabaseInitialized();
 
   // サーバー待受開始
   const server = app.listen(config.PORT, () => {

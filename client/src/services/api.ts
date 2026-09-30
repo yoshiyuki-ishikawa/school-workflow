@@ -31,7 +31,7 @@ export interface SchoolWorkSchedule {
   updated_by_user_name?: string | null;
 }
 
-const API_BASE = '/api';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || '/api';
 
 export class ApiError extends Error {
   status: number;
