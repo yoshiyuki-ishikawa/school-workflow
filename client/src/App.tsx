@@ -11,8 +11,17 @@ import { Header } from './components/Header';
 import { PoCUserSwitcher } from './components/PoCUserSwitcher';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ChangePasswordModal } from './components/ChangePasswordModal';
+import { SiteAccessGate } from './components/SiteAccessGate';
 
 export default function App() {
+  return (
+    <SiteAccessGate>
+      <MainApp />
+    </SiteAccessGate>
+  );
+}
+
+function MainApp() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [pocMode, setPocMode] = useState(true);
