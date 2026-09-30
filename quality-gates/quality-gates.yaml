@@ -1,0 +1,46 @@
+version: 2
+
+release:
+  required:
+    p0: 0
+    p1: 0
+    build: pass
+    typecheck: pass
+    regression: pass
+    golden_tests: pass
+    invariants: pass
+    migration_tests: pass
+    authorization_tests: pass
+    rollback_tests: pass
+    domain_parity_tests: pass
+    baseline_integrity: pass
+    core_regression_shield: pass
+    quality_coverage_baseline_preserved: pass
+    change_classification: pass
+    smallest_safe_change: pass
+    baseline_change_authorized: pass
+    human_decisions_resolved: pass
+
+  allowed_results:
+    - GO
+    - CONDITIONAL_GO
+    - NO_GO
+
+rules:
+  unexecuted_test_is_pass: false
+  unknown_policy_fails_closed: true
+  self_approval_allowed: false
+  client_authoritative_business_logic: false
+  historical_record_immutable: true
+  persistent_state_consistency_enforced: true
+  authoritative_domain_logic_ssot: true
+  server_owned_identity_enforced: true
+  workflow_cycle_separation_enforced: true
+  domain_lifecycle_isolation_enforced: true
+  balance_idempotency_enforced: true
+  quality_baseline_protection_enforced: true
+  core_impact_unknown_blocked: true
+  unauthorized_relaxation_blocked: true
+  test_skip_fails_closed: true
+  domain_fidelity_separation_enforced: true
+

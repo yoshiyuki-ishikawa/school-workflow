@@ -1,0 +1,18 @@
+version: 1
+
+policies:
+  - id: ATTENDANCE_BASE
+    file: attendance-policy.md
+    status: active
+
+  - id: LEAVE_BASE
+    file: leave-policy.md
+    status: active
+
+  - id: WORKFLOW_BASE
+    file: workflow-policy.md
+    status: active
+
+  - id: AUTH_BASE
+    file: authorization-policy.md
+    status: active

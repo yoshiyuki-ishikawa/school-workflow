@@ -1,0 +1,30 @@
+{
+  "name": "school-workflow-server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc && node -e \"const fs=require('fs'),path=require('path'); const d='dist/domain/auth/blocklist'; if(!fs.existsSync(d)) fs.mkdirSync(d,{recursive:true}); fs.copyFileSync('src/domain/auth/blocklist/common-passwords-v1.json', path.join(d,'common-passwords-v1.json'));\"",
+    "start": "node dist/index.js",
+    "test": "tsx --test --test-concurrency=1 src/**/*.test.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.18.2",
+    "@types/node": "^24.12.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.9.3"
+  }
+}
